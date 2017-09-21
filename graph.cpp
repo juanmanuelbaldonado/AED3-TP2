@@ -1,12 +1,31 @@
+#include "graph.h"
+#include "edge.h"
+
 #include <vector>
 #include <set>
-#include "graph.h"
 #include <iostream>
 #include <limits>
 
 
 using namespace std;
-#define INFINITY numeric_limits<int>::max();
+#define INFINITY numeric_limits<int>::max()
+
+
+Graph::Graph(unsigned int vertexCount, vector<Edge>& edges){
+  // Constructor, 
+  num_v = vertexCount;
+  adjacency_matrix = vector<vector<bool > >(vertexCount, vector<bool>(vertexCount, false));
+  weights = vector<vector<int > >(vertexCount, vector<int>(vertexCount, 0));
+
+  // Las matrices son simetricas
+  for(unsigned int i = 0; i < edges.size(); i++){
+    adjacency_matrix[edges[i].vertexA][edges[i].vertexB] = true;
+    adjacency_matrix[edges[i].vertexB][edges[i].vertexA] = true;
+    weights[edges[i].vertexA][edges[i].vertexB] = edges[i].weight;
+    weights[edges[i].vertexB][edges[i].vertexA] = edges[i].weight;
+  }
+}
+
 
 Graph::Graph(vector<vector<bool > > M, vector<vector<int > > W ){
   /* Inicializa un objeto del tipo Graph donde M se corresponde con
@@ -82,4 +101,45 @@ unsigned int Graph::pathSum(const vector<int >& path){
     }
   }
   return sum;
+}
+
+
+vector<int> Graph::prim(){
+  vector<bool> visited(num_v, false);
+  vector<int> distance(num_v, INFINITY);
+  vector<int> parent(num_v, INFINITY);
+
+  // Se toma arbitrariamente el nodo 0 como nodo inicial
+  unsigned int vertex = 0;
+  for(unsigned int i = 1; i < num_v; i++){
+    if(adjacency_matrix[vertex][i]){
+      distance[i] = weights[vertex][i];
+      parent[i] = vertex;
+    }
+  }
+
+  distance[vertex] = 0;
+  visited[vertex] = true;
+
+  // En num_v iteraciones se visitan todos los nodos
+  for(unsigned int i = 0; i < num_v; i++){
+    // Se busca el nodo de menor distancia para agregar que no fue visitado aun
+    vertex = INFINITY;
+    for(unsigned int j = 0; j < num_v; j++){
+      if(!visited[j] && distance[j] < vertex){
+        vertex = distance[j];
+      }
+    }
+
+    visited[vertex] = true;
+    // Se buscan los sucesores de vertex
+    for(unsigned int j = 0; j < num_v; j++){
+      if(!visited[j] && adjacency_matrix[vertex][j] && distance[j] > weights[vertex][j]){
+        distance[j] = weights[vertex][j];
+        parent[j] = vertex;
+      }
+    }
+  }
+
+  return parent;
 }

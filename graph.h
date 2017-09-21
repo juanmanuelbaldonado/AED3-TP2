@@ -1,5 +1,7 @@
 #ifndef GRAPH_H
 
+#include "edge.h"
+
 #include <vector>
 #include <utility>
 #include <set>
@@ -13,12 +15,13 @@ private:
   vector<vector<int > > weights;
 
 public:
-
+  Graph(unsigned int vertexCount, vector<Edge>& edges);
   Graph(vector<vector<bool > > M, vector<vector<int > > W );
   bool adjacent(unsigned int v, unsigned int w);
   pair<vector<int >,vector<int >> Dijkstra(unsigned int v);
   unsigned int pathSum(const vector<int >& path);
 
+  vector<int> prim();
 };
 
 #define GRAPH_H
