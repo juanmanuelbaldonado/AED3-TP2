@@ -115,8 +115,8 @@ int main(){
 
         std::cout << solutionCost << " " << roadsCount << " ";
 
-        for(unsigned int i = 0; i < factories + clients; i++){
-            for(unsigned int j = 0; j < i; j++){
+        for(unsigned int j = 0; j < heavyTransportList[i].getVertexCount(); j++){
+            for(unsigned int k = 0; k < i; k++){
               if(heavyTransportList[i].adjacent(i, j)){
                 std::cout << i << " " << j << " ";
               }
