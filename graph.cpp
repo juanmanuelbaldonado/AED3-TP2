@@ -37,10 +37,54 @@ Graph::Graph(vector<vector<bool > > M, vector<vector<int > > W ){
   weights = W;
 }
 
-bool Graph::adjacent(unsigned int v, unsigned int w){
+bool Graph::adjacent(unsigned int v, unsigned int w) const {
   return adjacency_matrix[v][w];
 }
 
+
+void Graph::setAdjacency(unsigned int v, unsigned int w, bool adjacency){
+  adjacency_matrix[v][w] = adjacency;
+}
+
+
+int Graph::weight(unsigned int v, unsigned int w) const {
+  return weights[v][w];
+}
+
+
+int Graph::weightSum() const {
+  int weights = 0;
+
+  for(unsigned int i = 0; i < num_v; i++){
+    for(unsigned int j = 0; j < i; j++){
+      if(adjacent(i, j)){
+        weights += weight(i, j);
+      }
+    }
+  }
+
+  return weights;
+}
+
+
+int Graph::edgeCount() const {
+  int edges = 0;
+
+  for(unsigned int i = 0; i < num_v; i++){
+    for(unsigned int j = 0; j < i; j++){
+      if(adjacent(i, j)){
+        edges++;
+      }
+    }
+  }
+
+  return edges;
+}
+
+
+unsigned int Graph::getVertexCount() const {
+  return num_v;
+}
 
 
 pair<vector<int >, vector<int> > Graph::Dijkstra(unsigned int v){
@@ -104,13 +148,13 @@ unsigned int Graph::pathSum(const vector<int >& path){
 }
 
 
-vector<int> Graph::prim(){
+vector<int> Graph::prim() const {
   vector<bool> visited(num_v, false);
   vector<int> distance(num_v, INFINITY);
   vector<int> parent(num_v, INFINITY);
 
   // Se toma arbitrariamente el nodo 0 como nodo inicial
-  unsigned int vertex = 0;
+  int vertex = 0;
   for(unsigned int i = 1; i < num_v; i++){
     if(adjacency_matrix[vertex][i]){
       distance[i] = weights[vertex][i];
