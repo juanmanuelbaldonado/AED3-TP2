@@ -48,6 +48,16 @@ int main(){
             std::cout << i << " " << parents[i] << " ";
         }
 
+
+        // RECETA PARA EL CAMINO MAXIMO (no pregunten):
+        // 1: dfs de un nodo random (funcion farthestNode (esta implementada))
+        // 2: tiras dfs del nodo que devuelve dfs
+        // 3: ???
+        // 4: Profit
+        // 5: tu camino maximo es el camino entre el nodo que devolvio el primer dfs y el segundo
+        
+        // Tomar el elemnto en la posicion tam(camino)/2 parte entera inferior o algo asi
+
         std::cout << std::endl;
     }
     
