@@ -187,3 +187,50 @@ vector<int> Graph::prim() const {
 
   return parent;
 }
+
+
+
+//Solo para arboles :'c
+vector<vector<int> > incidenceFromParents(vector<int> parents){
+
+  vector<vector<int> > matrix(parents.size(),vector<int>);
+
+  for(i = 1; i < parents.size(); i++){
+    matrix[i].push_back(parents[i]);
+    matrix[parents[i]].push_back(i);
+  }
+
+  return matrix;
+
+}
+
+pair<int,int> DFS(vector<vector<int> > T, vector<int>& visited, int depth, int actual){
+
+  //Aumento la profundidad y marco el nodo como visitado
+  visited[actual] = 1 ;
+  pair<int,int> max = make_pair(actual,depth);
+
+  for(int i = 0; i < T[actual].size(); i++){
+
+    if(visited[T[actual][i]] == 0 ){
+      pair<int,int> res = DFS(T,visited,depth+1,actual);
+      if(max.second < res.second){
+        max = res;
+      }    
+    }
+  }
+
+  return  max; 
+
+}
+//Devuelve el nodo a mayor distancia de n_0, SOLO PARA ARBOLES
+int farthestNode(vector<vector<int> > T, int n_0){
+
+  int depth = 0;
+  vector<int> visited(T.size(),0);
+  visited[0] = 1;
+  pair<int,int> max = DFS(T,visited,depth++, n_0);
+
+  return max;
+
+}
