@@ -48,10 +48,10 @@ Graph HeavyTransport::getOptimalSolution() const {
     vector<int> closestFactoryToEachClient(_clients);
 
     for(unsigned int c = 0; c < _clients; c++){
-        int closestFactory = distancesToFactory[0][c];
+        int closestFactory = 0;
         for(unsigned int f = 1; f < _factories; f++){
-            if(distancesToFactory[f][c] < closestFactory){
-                closestFactory = distancesToFactory[f][c];
+            if(distancesToFactory[f][_factories + c] < closestFactory){
+                closestFactory = f;
             }
         }
         closestFactoryToEachClient[c] = closestFactory;
@@ -83,10 +83,10 @@ std::vector<int> HeavyTransport::bfsTreeDistance(const Graph &tree, unsigned int
         vertex = vertexQueue.front();
         vertexQueue.pop();
         for(unsigned int i = 0; i < tree.getVertexCount(); i++){
-            if(!visited[vertex] && tree.adjacent(vertex, i)){
+            if(!visited[i] && tree.adjacent(vertex, i)){
                 distaces[i] = distaces[vertex] + tree.weight(vertex, i);
                 vertexQueue.push(vertex);
-                visited[vertex] = true;
+                visited[i] = true;
             }
         }
     }

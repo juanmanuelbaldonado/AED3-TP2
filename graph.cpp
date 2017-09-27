@@ -168,10 +168,10 @@ vector<int> Graph::prim() const {
   // En num_v iteraciones se visitan todos los nodos
   for(unsigned int i = 0; i < num_v; i++){
     // Se busca el nodo de menor distancia para agregar que no fue visitado aun
-    vertex = INFINITY;
+    int minDistance = INFINITY;
     for(unsigned int j = 0; j < num_v; j++){
-      if(!visited[j] && distance[j] < vertex){
-        vertex = distance[j];
+      if(!visited[j] && distance[j] < minDistance){
+        vertex = j;
       }
     }
 
@@ -193,9 +193,9 @@ vector<int> Graph::prim() const {
 //Solo para arboles :'c
 vector<vector<int> > incidenceFromParents(vector<int> parents){
 
-  vector<vector<int> > matrix(parents.size(),vector<int>);
+  vector<vector<int> > matrix(parents.size(),vector<int>());
 
-  for(i = 1; i < parents.size(); i++){
+  for(size_t i = 1; i < parents.size(); i++){
     matrix[i].push_back(parents[i]);
     matrix[parents[i]].push_back(i);
   }
@@ -210,7 +210,7 @@ pair<int,int> DFS(vector<vector<int> > T, vector<int>& visited, int depth, int a
   visited[actual] = 1 ;
   pair<int,int> max = make_pair(actual,depth);
 
-  for(int i = 0; i < T[actual].size(); i++){
+  for(size_t i = 0; i < T[actual].size(); i++){
 
     if(visited[T[actual][i]] == 0 ){
       pair<int,int> res = DFS(T,visited,depth+1,actual);
@@ -231,6 +231,6 @@ int farthestNode(vector<vector<int> > T, int n_0){
   visited[0] = 1;
   pair<int,int> max = DFS(T,visited,depth++, n_0);
 
-  return max;
-
+  //return max; NO COINCIDEN LOS TIPOS
+  return -1;
 }
