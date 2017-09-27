@@ -12,8 +12,8 @@ ejercicio1: ejercicio1.cpp solver.o graph.o
 ejercicio2: ejercicio2.cpp graph.o
 	$(CPP) $(FLAGS) -o $@ $< graph.o
 
-ejercicio3: ejercicio3.cpp graph.o
-	$(CPP) $(FLAGS) -o $@ $< graph.o
+ejercicio3: ejercicio3.cpp graph.o heavyTransport.o
+	$(CPP) $(FLAGS) -o $@ $< graph.o heavyTransport.o
 
 %.o: %.cpp
 	$(CPP) $(FLAGS) -c -o $@ $<

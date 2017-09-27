@@ -11,7 +11,7 @@ using namespace std;
 #define INFINITY numeric_limits<int>::max()
 
 
-Graph::Graph(unsigned int vertexCount, vector<Edge>& edges){
+Graph::Graph(unsigned int vertexCount, const vector<Edge>& edges){
   // Constructor, 
   num_v = vertexCount;
   adjacency_matrix = vector<vector<bool > >(vertexCount, vector<bool>(vertexCount, false));

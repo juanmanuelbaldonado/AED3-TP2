@@ -4,9 +4,9 @@
 #include "graph.h"
 #include <vector>
 
-class heavyTransport{
+class HeavyTransport{
     public:
-        heavyTransport(unsigned int factories, unsigned int clients);
+        HeavyTransport(unsigned int factories, unsigned int clients);
         void addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost);
         Graph getOptimalSolution() const;
 

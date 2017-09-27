@@ -1,15 +1,16 @@
 #include <vector>
+#include <queue>
 #include "heavyTransport.h"
 #include "graph.h"
 #include "edge.h"
 
-heavyTransport::heavyTransport(unsigned int factories, unsigned int clients){
+HeavyTransport::HeavyTransport(unsigned int factories, unsigned int clients){
     _factories = factories;
     _clients = clients;
 }
 
 
-void heavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost){
+void HeavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost){
     Edge e;
     e.vertexA = fc1 - 1; // Las fabricas y clientes se ingresan numerados del 1 a factories+clients
     e.vertexB = fc2 - 1;
@@ -18,7 +19,7 @@ void heavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int co
 }
 
 
-Graph heavyTransport::getOptimalSolution() const {
+Graph HeavyTransport::getOptimalSolution() const {
     Graph hT(_factories + _clients, _roadsList);
     
     vector<int> parents = hT.prim();
@@ -69,20 +70,23 @@ Graph heavyTransport::getOptimalSolution() const {
 }
 
 
-std::vector<int> heavyTransport::bfsTreeDistance(const Graph &tree, unsigned int startVertex) const {
+std::vector<int> HeavyTransport::bfsTreeDistance(const Graph &tree, unsigned int startVertex) const {
     unsigned int vertex;
     std::queue<unsigned int> vertexQueue;
     std::vector<int> distaces(tree.getVertexCount(), 0);
+    std::vector<bool> visited(tree.getVertexCount(), false);
 
     vertexQueue.push(startVertex);
+    visited[startVertex] = true;
 
     while(!vertexQueue.empty()){
         vertex = vertexQueue.front();
         vertexQueue.pop();
         for(unsigned int i = 0; i < tree.getVertexCount(); i++){
-            if(tree.adjacent(vertex, i)){
+            if(!visited[vertex] && tree.adjacent(vertex, i)){
                 distaces[i] = distaces[vertex] + tree.weight(vertex, i);
                 vertexQueue.push(vertex);
+                visited[vertex] = true;
             }
         }
     }

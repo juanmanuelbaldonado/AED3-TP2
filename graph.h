@@ -15,7 +15,7 @@ private:
   vector<vector<int > > weights;
 
 public:
-  Graph(unsigned int vertexCount, vector<Edge>& edges);
+  Graph(unsigned int vertexCount, const vector<Edge>& edges);
   Graph(vector<vector<bool > > M, vector<vector<int > > W );
   unsigned int getVertexCount() const;
   bool adjacent(unsigned int v, unsigned int w) const;
