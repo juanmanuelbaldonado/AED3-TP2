@@ -27,6 +27,13 @@ public:
   unsigned int pathSum(const vector<int >& path);
 
   vector<int> prim() const;
+
+  //int farthestNode(vector<vector<int> >& T, int n_0);
+  //int networkCost(Graph& network,vector<int>& parents);
+  //vector<Edge> getLinks(Graph& network,vector<int>& parents);
+  //bool search(vector<vector<int> >& T, vector<int>& visited, vector<int>& path,unsigned int current, unsigned int target);
+  //vector<int> makePath(vector<vector<int> >&  T, unsigned int root,unsigned int target);
+  //int getMaster(vector<int>& parents);
 };
 
 #define GRAPH_H

@@ -10,9 +10,10 @@
 using namespace std;
 #define INFINITY numeric_limits<int>::max()
 
+/***********************************************************************/
 
 Graph::Graph(unsigned int vertexCount, const vector<Edge>& edges){
-  // Constructor, 
+  // Constructor,
   num_v = vertexCount;
   adjacency_matrix = vector<vector<bool > >(vertexCount, vector<bool>(vertexCount, false));
   weights = vector<vector<int > >(vertexCount, vector<int>(vertexCount, 0));
@@ -26,6 +27,7 @@ Graph::Graph(unsigned int vertexCount, const vector<Edge>& edges){
   }
 }
 
+/***********************************************************************/
 
 Graph::Graph(vector<vector<bool > > M, vector<vector<int > > W ){
   /* Inicializa un objeto del tipo Graph donde M se corresponde con
@@ -37,20 +39,25 @@ Graph::Graph(vector<vector<bool > > M, vector<vector<int > > W ){
   weights = W;
 }
 
+/***********************************************************************/
+
 bool Graph::adjacent(unsigned int v, unsigned int w) const {
   return adjacency_matrix[v][w];
 }
 
+/***********************************************************************/
 
 void Graph::setAdjacency(unsigned int v, unsigned int w, bool adjacency){
   adjacency_matrix[v][w] = adjacency;
 }
 
+/***********************************************************************/
 
 int Graph::weight(unsigned int v, unsigned int w) const {
   return weights[v][w];
 }
 
+/***********************************************************************/
 
 int Graph::weightSum() const {
   int weights = 0;
@@ -66,6 +73,7 @@ int Graph::weightSum() const {
   return weights;
 }
 
+/***********************************************************************/
 
 int Graph::edgeCount() const {
   int edges = 0;
@@ -81,11 +89,13 @@ int Graph::edgeCount() const {
   return edges;
 }
 
+/***********************************************************************/
 
 unsigned int Graph::getVertexCount() const {
   return num_v;
 }
 
+/***********************************************************************/
 
 pair<vector<int >, vector<int> > Graph::Dijkstra(unsigned int v){
   /* Implementacion del algoritmo de Dijkstra para obtener los
@@ -133,6 +143,8 @@ pair<vector<int >, vector<int> > Graph::Dijkstra(unsigned int v){
   return make_pair(pi,pred);
 }
 
+/***********************************************************************/
+
 unsigned int Graph::pathSum(const vector<int >& path){
   /* Devuelve la sumatoria de los pesos en el camino pasado por parametro. */
 
@@ -147,6 +159,7 @@ unsigned int Graph::pathSum(const vector<int >& path){
   return sum;
 }
 
+/***********************************************************************/
 
 vector<int> Graph::prim() const {
   vector<bool> visited(num_v, false);
@@ -186,51 +199,4 @@ vector<int> Graph::prim() const {
   }
 
   return parent;
-}
-
-
-
-//Solo para arboles :'c
-vector<vector<int> > incidenceFromParents(vector<int> parents){
-
-  vector<vector<int> > matrix(parents.size(),vector<int>());
-
-  for(size_t i = 1; i < parents.size(); i++){
-    matrix[i].push_back(parents[i]);
-    matrix[parents[i]].push_back(i);
-  }
-
-  return matrix;
-
-}
-
-pair<int,int> DFS(vector<vector<int> > T, vector<int>& visited, int depth, int actual){
-
-  //Aumento la profundidad y marco el nodo como visitado
-  visited[actual] = 1 ;
-  pair<int,int> max = make_pair(actual,depth);
-
-  for(size_t i = 0; i < T[actual].size(); i++){
-
-    if(visited[T[actual][i]] == 0 ){
-      pair<int,int> res = DFS(T,visited,depth+1,actual);
-      if(max.second < res.second){
-        max = res;
-      }    
-    }
-  }
-
-  return  max; 
-
-}
-//Devuelve el nodo a mayor distancia de n_0, SOLO PARA ARBOLES
-int farthestNode(vector<vector<int> > T, int n_0){
-
-  int depth = 0;
-  vector<int> visited(T.size(),0);
-  visited[0] = 1;
-  pair<int,int> max = DFS(T,visited,depth++, n_0);
-
-  //return max; NO COINCIDEN LOS TIPOS
-  return -1;
 }
