@@ -94,6 +94,7 @@ bool search(vector<vector<int > >& T, vector<int>& visited, vector<int>& path,un
 vector<int> makePath(vector<vector<int > >&  T, unsigned int root,unsigned int target){
   vector<int> visited(T.size(),0);
   vector<int> S;
+  S.push_back(root);
   bool ok = search(T,visited,S,root,target);
   return S;
 }
@@ -107,7 +108,16 @@ int getMaster(vector<int>& parents){
   int v1,v2;
   v1 = farthestNode(T,0);
   v2 = farthestNode(T,v1);
+
+  cout << "Nodes: " << v1 << " " << v2 << endl;
+
   vector<int> path =  makePath(T,v1,v2);
+  cout << "< ";
+  for (size_t i = 0; i < path.size(); i++) {
+    cout << path[i] << " " ;
+  }
+  cout << ">" << endl;
+
   return path[path.size()/2];
 }
 
