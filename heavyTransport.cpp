@@ -57,11 +57,20 @@ Graph HeavyTransport::getOptimalSolution() const {
         closestFactoryToEachClient[c] = closestFactory;
     }
 
-    // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias
-    for(unsigned int i = 0; i < _factories + _clients; i++){
-        for(unsigned int j = 0; j < _factories + _clients; j++){
+    // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias entre clientes
+    for(unsigned int i = 0; i < _clients; i++){
+        for(unsigned int j = 0; j < _clients; j++){
             if(closestFactoryToEachClient[i] != closestFactoryToEachClient[j]){
-                hTMST.setAdjacency(i, j, false);
+                hTMST.setAdjacency(_factories + i, _factories + j, false);
+            }
+        }
+    }
+
+    // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias entre un cliente y una fábrica
+    for(unsigned int i = 0; i < _factories; i++){
+        for(unsigned int j = 0; j < _clients; j++){
+            if((int)i != closestFactoryToEachClient[j]){
+                hTMST.setAdjacency(i, _clients + j, false);
             }
         }
     }
@@ -85,7 +94,7 @@ std::vector<int> HeavyTransport::bfsTreeDistance(const Graph &tree, unsigned int
         for(unsigned int i = 0; i < tree.getVertexCount(); i++){
             if(!visited[i] && tree.adjacent(vertex, i)){
                 distaces[i] = distaces[vertex] + tree.weight(vertex, i);
-                vertexQueue.push(vertex);
+                vertexQueue.push(i);
                 visited[i] = true;
             }
         }

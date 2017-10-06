@@ -14,6 +14,19 @@ private:
   vector<vector<bool > > adjacency_matrix ;
   vector<vector<int > > weights;
 
+  class VertexDistance{
+    private:
+      unsigned int _vertexNumber;
+      int _distance;
+
+    public:
+      VertexDistance(unsigned int vertexNumber, int distance);
+      unsigned int getVertexNumber() const;
+      int getDistance() const;
+      bool operator<(const VertexDistance& b) const;
+      bool operator==(const VertexDistance& b) const;
+  };
+
 public:
   Graph(unsigned int vertexCount, const vector<Edge>& edges);
   Graph(vector<vector<bool > > M, vector<vector<int > > W );
@@ -27,6 +40,7 @@ public:
   unsigned int pathSum(const vector<int >& path);
 
   vector<int> prim() const;
+  vector<int> primWithQueue() const;
 
   //int farthestNode(vector<vector<int> >& T, int n_0);
   //int networkCost(Graph& network,vector<int>& parents);

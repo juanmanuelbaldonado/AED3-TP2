@@ -200,3 +200,65 @@ vector<int> Graph::prim() const {
 
   return parent;
 }
+
+/***********************************************************************/
+
+vector<int> Graph::primWithQueue() const {
+  vector<bool> visited(num_v, false);
+  vector<int> distance(num_v, INFINITY);
+  vector<int> parent(num_v, INFINITY);
+  set<VertexDistance> vertexQueue;
+
+  // Se toma arbitrariamente el nodo 0 como nodo inicial
+  int vertex = 0;
+  distance[vertex] = 0;
+  vertexQueue.insert(VertexDistance(vertex, 0)); // Se inserta en O(log n)
+
+  while(!vertexQueue.empty()){
+    VertexDistance vd = *vertexQueue.begin();
+    vertex = vd.getVertexNumber(); // Se extrae el mínimo en O(1)
+    vertexQueue.erase(vd); // Elimina el vértice en O(log n)
+
+    if(!visited[vertex]){
+      visited[vertex] = true;
+      for(unsigned int i = 0; i < num_v; i++){
+        if(adjacency_matrix[vertex][i] && !visited[i] && distance[i] > weights[vertex][i]){
+          distance[i] = weights[vertex][i];
+          parent[i] = vertex;
+          vertexQueue.insert(VertexDistance(i, distance[i])); // inserta en O(log n)
+        }
+      }
+    }
+  }
+
+  return parent;
+}
+
+/***********************************************************************/
+
+Graph::VertexDistance::VertexDistance(unsigned int vertexNumber, int distance){
+  _vertexNumber = vertexNumber;
+  _distance = distance;
+}
+
+unsigned int Graph::VertexDistance::getVertexNumber() const{
+  return _vertexNumber;
+}
+
+int Graph::VertexDistance::getDistance() const{
+  return _distance;
+}
+
+bool Graph::VertexDistance::operator<(const VertexDistance& b) const{
+  bool isMinor = this->_distance < b._distance;
+
+  if(this->_distance == b._distance){
+    isMinor = this->_vertexNumber < b._vertexNumber;
+  }
+
+  return isMinor;
+}
+
+bool Graph::VertexDistance::operator==(const VertexDistance& b) const{
+  return this->_distance == b._distance && this->_vertexNumber == b._vertexNumber;
+}
