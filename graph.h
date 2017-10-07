@@ -39,6 +39,8 @@ public:
   pair<vector<int >,vector<int >> Dijkstra(unsigned int v);
   unsigned int pathSum(const vector<int >& path);
 
+  pair<int,vector<int> > labelComponents();
+  void DFSUtil(const int v, vector<bool>& visited, vector<int>& components, int component );
   vector<int> prim() const;
   vector<int> primWithQueue() const;
 

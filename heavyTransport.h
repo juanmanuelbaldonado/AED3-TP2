@@ -9,6 +9,8 @@ class HeavyTransport{
         HeavyTransport(unsigned int factories, unsigned int clients);
         void addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost);
         Graph getOptimalSolution() const;
+        Graph applyToComponents();
+
 
     private:
         std::vector<int> bfsTreeDistance(const Graph &tree, unsigned int startVertex) const;
@@ -16,7 +18,10 @@ class HeavyTransport{
         unsigned int _factories;
         unsigned int _clients;
         std::vector<Edge> _roadsList;
+
 };
 
-#endif
+pair<int,int> getFC(vector<int>& component, unsigned int originalF);
 
+
+#endif

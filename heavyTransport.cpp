@@ -3,25 +3,131 @@
 #include "heavyTransport.h"
 #include "graph.h"
 #include "edge.h"
+#include <iostream>
+
+
+
+
+/********************************************/
+/******** Basado en la idea de Pato *********/
+/********************************************/
+
+/*  PLOT TWIST: el grafo que nos pasan por parametro PUEDE
+ *  no ser conexto. Khee?? Si, en ninguna parte del enunciado
+ *  dice que el grafo es conexo entonces no podemos aplicar
+ *  prim asi nomas. Pero para no todo esta perdido... El algoritmo
+ *  funciona perfecto si el grafo es conexo.
+ *
+ *  Solucion: la solucion se puede pensar de la siguiente manera
+ *  1) SPLIT: dividimos el grafo en componentes conexas
+ *  2) APPLY: aplicamos el algoritmo a cada componente conexas
+ *  3) COMBINE: combinamos las componentes
+ *
+ *  Complejidad: la complejidad va a ser la suma de lo que nos cuesta
+ *  correr el algoritmo original en cada una de las componentes conexas que
+ *  tendria que dar en total O(|V|^2)
+ */
+
+
+
+/*
+NOTE: La version original falla con este caso:
+
+2 3 6
+1 3 3
+1 4 3
+3 4 1
+2 5 1
+4 5 6
+1 2 1
+0
+
+La solucion que propone contiene una ruta entre las fabricas 1 y 2
+
+*/
+
+
+
+Graph HeavyTransport::applyToComponents(){
+  Graph hT(_factories + _clients, _roadsList); //O(|V|^2)
+
+  pair<int, vector<int> > components = hT.labelComponents(); // O(|V|^2)
+
+  vector<vector<int> > componentsList(components.first);
+  for (size_t i = 0; i < components.second.size(); i++) { // O(|V|)
+    componentsList[components.second[i]].push_back(i);
+  }
+
+
+
+  for (size_t i = 0; i < componentsList.size(); i++) {
+    /* Para cada componente conexa hacemos lo siguiente*/
+
+    unsigned int cSize = componentsList[i].size();
+    pair< int, int> component_fc; // = getFC(componentsList[i],_factories);
+    for (size_t j = 0; j < cSize; j++) {
+      // NOTE: quiza va un component.size() - i - 1
+      if(componentsList[i][j] >= _factories){
+        component_fc =  make_pair(j, cSize - j);
+        break;
+      }
+    }
+
+
+
+    HeavyTransport cc(component_fc.first, component_fc.second);
+
+    for (size_t v = 0; v < cSize; v++) {
+      for (size_t w = v + 1; w < cSize; w++) {
+        if(hT.adjacent(componentsList[i][v],componentsList[i][w])){
+          cc.addRoad(v+1, w+1, hT.weight(componentsList[i][v],componentsList[i][w]) );
+        }
+      }
+    }
+
+
+
+
+    // APPLY : aplicamos el algoritmo a la componente conexa
+    Graph cc_sol = cc.getOptimalSolution();//O(|cSize|^2)
+
+
+    // COMBINE: actualizamos el grafo original con los resultados
+    for (size_t v = 0; v < cSize; v++) {
+      for (size_t w = 0; w < cSize; w++) {
+          int original_v = componentsList[i][v];
+          int original_w = componentsList[i][w];
+          if (cc_sol.adjacent(v,w)) hT.setAdjacency(original_v,original_w,true);
+          else hT.setAdjacency(original_v,original_w,false);
+      }
+    }
+  }
+
+  return hT;
+}
+
+
+
+/*****************************************************************************/
 
 HeavyTransport::HeavyTransport(unsigned int factories, unsigned int clients){
-    _factories = factories;
-    _clients = clients;
+  _factories = factories;
+  _clients = clients;
 }
 
 
 void HeavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost){
-    Edge e;
-    e.vertexA = fc1 - 1; // Las fabricas y clientes se ingresan numerados del 1 a factories+clients
-    e.vertexB = fc2 - 1;
-    e.weight = cost;
-    _roadsList.push_back(e);
+  Edge e;
+  e.vertexA = fc1 - 1; // Las fabricas y clientes se ingresan numerados del 1 a factories+clients
+  e.vertexB = fc2 - 1;
+  e.weight = cost;
+  _roadsList.push_back(e);
 }
 
 
 Graph HeavyTransport::getOptimalSolution() const {
     Graph hT(_factories + _clients, _roadsList);
-    
+
     vector<int> parents = hT.prim();
     vector<Edge> roadsListMST;
 
