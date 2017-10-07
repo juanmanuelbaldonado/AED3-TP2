@@ -44,6 +44,8 @@ NOTE: La version original falla con este caso:
 
 La solucion que propone contiene una ruta entre las fabricas 1 y 2
 
+SOLUCIONADO!
+
 */
 
 
@@ -161,6 +163,13 @@ Graph HeavyTransport::getOptimalSolution() const {
             }
         }
         closestFactoryToEachClient[c] = closestFactory;
+    }
+
+    // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias entre fábricas
+    for(unsigned int i = 0; i < _factories; i++){
+        for(unsigned int j = 0; j < _factories; j++){
+            hTMST.setAdjacency(i, j, false);
+        }
     }
 
     // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias entre clientes
