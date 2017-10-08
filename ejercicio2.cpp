@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include <chrono>
+#define now std::chrono::high_resolution_clock::now
 
 /***********************************************************************/
 
@@ -122,7 +124,17 @@ int getMaster(vector<int>& parents){
 }
 
 
-int main(){
+int main(int argc, char** argv){
+    int tiempos = 0;
+    int primOriginal = 1;
+    if(argc > 1){
+    	tiempos = std::atoi(argv[1]);
+    	primOriginal = std::atoi(argv[2]);
+    }
+
+
+    if(tiempos){std::cout << "nodos,ejes,prim,master" << std::endl;}
+
     std::vector<Graph> networks;
 
     unsigned int serverCount;
@@ -150,30 +162,61 @@ int main(){
         std::cin >> serverCount;
     }
     for(unsigned int i = 0; i < networks.size(); i++){
-        vector<int> parents = networks[i].prim();
-        vector<Edge> linksList = getLinks(networks[i],parents);
+        std::chrono::high_resolution_clock::time_point t1_prim;
+        std::chrono::high_resolution_clock::time_point t2_prim;
+        std::chrono::duration<double> time_span_prim;
 
-        int solutionCost = networkCost(networks[i],parents);
-        int masterServer = getMaster(parents);
-        int linksCount = linksList.size();
+        std::chrono::high_resolution_clock::time_point t1_master;
+        std::chrono::high_resolution_clock::time_point t2_master;
+        std::chrono::duration<double> time_span_master;
 
-        std::cout << solutionCost << " " << masterServer << " " << linksCount << " ";
-        // Luego de calcular el arbol generador minimo, cada nodo tiene un solo padre
-        for(unsigned int i = 0; i < linksList.size(); i++){
-            std::cout << linksList[i].vertexA << " " << linksList[i].vertexB << " ";
+        
+        vector<int> parents;
+        if(primOriginal){
+        	t1_prim = now();
+        	parents = networks[i].prim();
+        	t2_prim = now();
+        } else {
+        	t1_prim = now();
+        	parents = networks[i].primWithQueue();
+        	t2_prim = now();
         }
 
+        vector<Edge> linksList = getLinks(networks[i],parents);
 
-        // RECETA PARA EL CAMINO MAXIMO (no pregunten):
-        // 1: dfs de un nodo random (funcion farthestNode (esta implementada))
-        // 2: tiras dfs del nodo que devuelve dfs
-        // 3: ???
-        // 4: Profit
-        // 5: tu camino maximo es el camino entre el nodo que devolvio el primer dfs y el segundo
+        time_span_prim = std::chrono::duration_cast<std::chrono::duration<double> >(t2_prim-t1_prim);
 
-        // Tomar el elemnto en la posicion tam(camino)/2 parte entera inferior o algo asi
 
-        std::cout << std::endl;
+        int solutionCost = networkCost(networks[i],parents);
+        t1_master = now();
+        int masterServer = getMaster(parents);
+        t2_master = now();
+        int linksCount = linksList.size();
+
+        time_span_master = std::chrono::duration_cast<std::chrono::duration<double> >(t2_master-t1_master);
+
+
+        if(tiempos){
+        	std::cout << networks[i].getVertexCount() << "," << networks[i].edgeCount() << "," << time_span_prim.count() << time_span_master.count() << std::endl;
+        } else {
+        	std::cout << solutionCost << " " << masterServer << " " << linksCount << " ";
+        	// Luego de calcular el arbol generador minimo, cada nodo tiene un solo padre
+        	for(unsigned int i = 0; i < linksList.size(); i++){
+            	std::cout << linksList[i].vertexA << " " << linksList[i].vertexB << " ";
+        	}
+    	
+
+        	// RECETA PARA EL CAMINO MAXIMO (no pregunten):
+        	// 1: dfs de un nodo random (funcion farthestNode (esta implementada))
+        	// 2: tiras dfs del nodo que devuelve dfs
+        	// 3: ???
+        	// 4: Profit
+        	// 5: tu camino maximo es el camino entre el nodo que devolvio el primer dfs y el segundo
+
+        	// Tomar el elemnto en la posicion tam(camino)/2 parte entera inferior o algo asi
+
+        	std::cout << std::endl;
+    	}
     }
 
     return 0;
