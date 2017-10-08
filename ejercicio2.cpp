@@ -162,6 +162,9 @@ int main(int argc, char** argv){
         std::cin >> serverCount;
     }
     for(unsigned int i = 0; i < networks.size(); i++){
+    	unsigned int vertexCount = networks[i].getVertexCount();
+    	unsigned int edgesCount = networks[i].edgeCount();
+
         std::chrono::high_resolution_clock::time_point t1_prim;
         std::chrono::high_resolution_clock::time_point t2_prim;
         std::chrono::duration<double> time_span_prim;
@@ -197,7 +200,7 @@ int main(int argc, char** argv){
 
 
         if(tiempos){
-        	std::cout << networks[i].getVertexCount() << "," << networks[i].edgeCount() << "," << time_span_prim.count() << time_span_master.count() << std::endl;
+        	std::cout << vertexCount << "," << edgesCount << "," << time_span_prim.count() << time_span_master.count() << std::endl;
         } else {
         	std::cout << solutionCost << " " << masterServer << " " << linksCount << " ";
         	// Luego de calcular el arbol generador minimo, cada nodo tiene un solo padre
