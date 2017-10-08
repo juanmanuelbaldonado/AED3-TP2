@@ -103,7 +103,7 @@ vector<int> makePath(vector<vector<int > >&  T, unsigned int root,unsigned int t
 
 /***********************************************************************/
 
-int getMaster(vector<int>& parents){
+int getMaster(vector<int>& parents, int tiempos){
 
   vector<vector<int> > T(parents.size());
   incidenceFromParents(parents,T);
@@ -111,15 +111,15 @@ int getMaster(vector<int>& parents){
   v1 = farthestNode(T,0);
   v2 = farthestNode(T,v1);
 
-  cout << "Nodes: " << v1 << " " << v2 << endl;
-
   vector<int> path =  makePath(T,v1,v2);
-  cout << "< ";
-  for (size_t i = 0; i < path.size(); i++) {
-    cout << path[i] << " " ;
+  if(!tiempos){
+    cout << "Nodes: " << v1 << " " << v2 << endl;
+    cout << "< ";
+    for (size_t i = 0; i < path.size(); i++) {
+      cout << path[i] << " " ;
+    }
+    cout << ">" << endl;
   }
-  cout << ">" << endl;
-
   return path[path.size()/2];
 }
 
@@ -192,7 +192,7 @@ int main(int argc, char** argv){
 
         int solutionCost = networkCost(networks[i],parents);
         t1_master = now();
-        int masterServer = getMaster(parents);
+        int masterServer = getMaster(parents, tiempos);
         t2_master = now();
         int linksCount = linksList.size();
 
@@ -200,7 +200,7 @@ int main(int argc, char** argv){
 
 
         if(tiempos){
-        	std::cout << vertexCount << "," << edgesCount << "," << time_span_prim.count() << time_span_master.count() << std::endl;
+        	std::cout << vertexCount << "," << edgesCount << "," << time_span_prim.count() << "," << time_span_master.count() << std::endl;
         } else {
         	std::cout << solutionCost << " " << masterServer << " " << linksCount << " ";
         	// Luego de calcular el arbol generador minimo, cada nodo tiene un solo padre
