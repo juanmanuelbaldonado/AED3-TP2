@@ -11,12 +11,12 @@ def componentes(fab,cli,comp):
 	clientes = []
 	for i in range(0,cli):
 		clientes.append(i+1+fab)
-	
+
 	componentes = []
 	for i in range(0,comp):
 		aux = []
 		aux.append(fabricas[i])
-	
+
 		componentes.append(aux)
 	
 	for i in range(0,comp):
@@ -59,10 +59,10 @@ def componentes(fab,cli,comp):
 		aux = []
 		for i in range(0,len(componentes[c])-1):
 			for j in range(i+1,len(componentes[c])):
-				aux.append((componentes[c][i],componentes[c][j]))
+				secure_random = random.SystemRandom()
+				peso = secure_random.choice(pesos)
+				aux.append((componentes[c][i],componentes[c][j],peso))
 		instancias.append(aux)
-
-	print(instancias)
 
 	arst = 0
 	for i in range(0,len(instancias)):
@@ -72,8 +72,14 @@ def componentes(fab,cli,comp):
 	print(str(fab) + " " + str(cli) + " " + str(arst))
 	for i in range(0,len(instancias)):
 		for j in range(0,len(instancias[i])):
-			print(str(instancias[i][j][0]) + " " + str(instancias[i][j][1]))
+			print(str(instancias[i][j][0]) + " " + str(instancias[i][j][1]) + " " + str(instancias[i][j][2]))
+
+
+def generador(fab, cli, comp):
+	for i in range(0,comp):
+		componentes(fab,cli,i+1)
+	print('0')
 
 
 if __name__ == '__main__':
-    componentes()
+    generador()

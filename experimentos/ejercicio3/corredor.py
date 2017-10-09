@@ -4,4 +4,4 @@ import random
 import math
 import creador
 
-creador.componentes(60,200,60)
+creador.generador(90,90,90)
