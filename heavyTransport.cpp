@@ -130,11 +130,11 @@ void HeavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int co
 Graph HeavyTransport::getOptimalSolution() const {
     Graph hT(_factories + _clients, _roadsList);
 
-    vector<int> parents = hT.prim();
+    vector<int> parents = hT.prim();// O(|CC|^2)
     vector<Edge> roadsListMST;
 
     // Se crea la lista de ejes a partir del resultado devuelto por Prim
-    for(unsigned int i = 1; i < _factories + _clients; i++){
+    for(unsigned int i = 1; i < _factories + _clients; i++){ // O(|C|)
         Edge e;
         e.vertexA = i;
         e.vertexB = parents[i];

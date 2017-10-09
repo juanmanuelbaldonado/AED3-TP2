@@ -13,7 +13,7 @@
 //Solo para arboles :'c
 void incidenceFromParents(vector<int>& parents , vector<vector<int> >& adjList){
 
-  for(size_t i = 1; i < parents.size(); i++){
+  for(size_t i = 1; i < parents.size(); i++){ //O(parents.size())
     adjList[i].push_back(parents[i]);
     adjList[parents[i]].push_back(i);
   }
@@ -45,7 +45,7 @@ int farthestNode(vector<vector<int> >& T, int n_0){
   int depth = 0;
   vector<int> visited(T.size(),0);
   visited[n_0] = 1;
-  pair<int,int> max = DFS(T,visited,depth++, n_0);
+  pair<int,int> max = DFS(T,visited,depth++, n_0); //O(T.size())
   // devolvemos el nodo mas lejano
   return max.first;
 }
@@ -79,7 +79,7 @@ vector<Edge> getLinks(Graph& network,vector<int>& parents){
 
 
 bool search(vector<vector<int > >& T, vector<int>& visited, vector<int>& path,unsigned int current, unsigned int target){
-
+//para cada uno recorre los adyacente al actual, una sola vez => la suma de cada ejecución de search da O(n)
   if (current == target) return true;
   visited[current] = 1;
   for (auto it = begin(T[current]); it != end(T[current]); ++it) {
@@ -97,25 +97,26 @@ vector<int> makePath(vector<vector<int > >&  T, unsigned int root,unsigned int t
   vector<int> visited(T.size(),0);
   vector<int> S;
   S.push_back(root);
-  bool ok = search(T,visited,S,root,target);
+  bool ok = search(T,visited,S,root,target); //O(T.size())
   return S;
 }
 
 /***********************************************************************/
 
-int getMaster(vector<int>& parents, int tiempos){
-
+int getMaster(vector<int>& parents, int tiempos){ //O(n)
+//parents.size() ~= T.size() ~= n
   vector<vector<int> > T(parents.size());
-  incidenceFromParents(parents,T);
+  incidenceFromParents(parents,T); //O(parents.size())
   int v1,v2;
-  v1 = farthestNode(T,0);
-  v2 = farthestNode(T,v1);
+  v1 = farthestNode(T,0); //O(T.size())
+  v2 = farthestNode(T,v1); //O(T.size())
 
-  vector<int> path =  makePath(T,v1,v2);
+  vector<int> path =  makePath(T,v1,v2); //O(T.size())
   if(!tiempos){
+    //impresión del resultado, podría estar afuera de la función como adentro
     cout << "Nodes: " << v1 << " " << v2 << endl;
     cout << "< ";
-    for (size_t i = 0; i < path.size(); i++) {
+    for (size_t i = 0; i < path.size(); i++) { //O(path.size()), que como mucho es n
       cout << path[i] << " " ;
     }
     cout << ">" << endl;
