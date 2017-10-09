@@ -132,9 +132,9 @@ def aristas(nodos, aristasTot):
 		print(str(instancia[i][0][0]) + ' ' + str(instancia[i][0][1]) + ' ' + str(instancia[i][1]))
 
 
-def selector(tipo, nodos, aristasTot):
+def selector(tipo, nodos, aristasTot, step):
 	if(tipo == "aristas"):
-		for i in range(4,aristasTot):
+		for i in range(4,aristasTot,step):
 			aristas(nodos, i)
 	elif(tipo == "max"):
 		for i in range(4, nodos):
