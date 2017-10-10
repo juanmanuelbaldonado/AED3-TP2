@@ -80,6 +80,10 @@ def generador(fab, cli, comp):
 		componentes(fab,cli,i+1)
 	print('0')
 
+def generadorFabs(fab,cli):
+	for i in range(0,fab):
+		componentes(i+1,cli,1)
+	print('0')
 
 if __name__ == '__main__':
-    generador()
+    generadorFabs(90,90)
