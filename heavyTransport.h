@@ -8,13 +8,12 @@ class HeavyTransport{
     public:
         HeavyTransport(unsigned int factories, unsigned int clients);
         void addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost);
+        vector<Edge> Kruskal(const Graph& G, vector<vector<int> >& incidenceList) const;
         Graph getOptimalSolution() const;
-        Graph applyToComponents();
-
+        vector<vector<int> > getInsidenceList(const Graph& G) const;
+        Graph getOptimalSolution(const Graph& G) const;
 
     private:
-        std::vector<int> bfsTreeDistance(const Graph &tree, unsigned int startVertex) const;
-
         unsigned int _factories;
         unsigned int _clients;
         std::vector<Edge> _roadsList;

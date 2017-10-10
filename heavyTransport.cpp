@@ -48,68 +48,6 @@ SOLUCIONADO!
 
 */
 
-
-
-Graph HeavyTransport::applyToComponents(){
-  Graph hT(_factories + _clients, _roadsList); //O(|V|^2)
-
-  pair<int, vector<int> > components = hT.labelComponents(); // O(|V|^2)
-
-  vector<vector<int> > componentsList(components.first);
-  for (size_t i = 0; i < components.second.size(); i++) { // O(|V|)
-    componentsList[components.second[i]].push_back(i);
-  }
-
-
-
-  for (size_t i = 0; i < componentsList.size(); i++) {
-    /* Para cada componente conexa hacemos lo siguiente*/
-
-    unsigned int cSize = componentsList[i].size();
-    pair< int, int> component_fc; // = getFC(componentsList[i],_factories);
-    for (size_t j = 0; j < cSize; j++) {
-      // NOTE: quiza va un component.size() - i - 1
-      if(componentsList[i][j] >= _factories){
-        component_fc =  make_pair(j, cSize - j);
-        break;
-      }
-    }
-
-
-
-    HeavyTransport cc(component_fc.first, component_fc.second);
-
-    for (size_t v = 0; v < cSize; v++) {
-      for (size_t w = v + 1; w < cSize; w++) {
-        if(hT.adjacent(componentsList[i][v],componentsList[i][w])){
-          cc.addRoad(v+1, w+1, hT.weight(componentsList[i][v],componentsList[i][w]) );
-        }
-      }
-    }
-
-
-
-
-    // APPLY : aplicamos el algoritmo a la componente conexa
-    Graph cc_sol = cc.getOptimalSolution();//O(|cSize|^2)
-
-
-    // COMBINE: actualizamos el grafo original con los resultados
-    for (size_t v = 0; v < cSize; v++) {
-      for (size_t w = 0; w < cSize; w++) {
-          int original_v = componentsList[i][v];
-          int original_w = componentsList[i][w];
-          if (cc_sol.adjacent(v,w)) hT.setAdjacency(original_v,original_w,true);
-          else hT.setAdjacency(original_v,original_w,false);
-      }
-    }
-  }
-
-  return hT;
-}
-
-
-
 /*****************************************************************************/
 
 HeavyTransport::HeavyTransport(unsigned int factories, unsigned int clients){
@@ -127,93 +65,62 @@ void HeavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int co
 }
 
 
-Graph HeavyTransport::getOptimalSolution() const {
-    Graph hT(_factories + _clients, _roadsList);
+vector<Edge> HeavyTransport::Kruskal(const Graph& G, vector<vector<int> >& incidenceList) const{
 
-    vector<int> parents = hT.prim();// O(|CC|^2)
-    vector<Edge> roadsListMST;
+	// Marcamos las fabricas como visitadas
+	vector<bool> visited(G.getVertexCount(),false);
+	set<Edge> edges;
+	
+	for (unsigned int i = 0; i < _factories; ++i){
+		visited[i] = true;
+		for (auto it = incidenceList[i].begin(); it != incidenceList[i].end() ; ++it){
+			if((unsigned int)*it >= _factories) {
+				Edge e(i,*it,G.weight(i,*it));
+				edges.insert(e);
+			}
+		}
+	}
 
-    // Se crea la lista de ejes a partir del resultado devuelto por Prim
-    for(unsigned int i = 1; i < _factories + _clients; i++){ // O(|C|)
-        Edge e;
-        e.vertexA = i;
-        e.vertexB = parents[i];
-        e.weight = hT.weight(e.vertexA, e.vertexB);
-        roadsListMST.push_back(e);
+	vector<Edge> S;
+
+	while(!edges.empty()){
+		Edge e = *(edges.begin());
+		edges.erase(e);
+		if (!visited[e.vertexA] || !visited[e.vertexB] ){
+			int new_vertex = !visited[e.vertexA] ? e.vertexA : e.vertexB;
+			visited[new_vertex] = true;
+			S.push_back(e);
+			for (auto it = incidenceList[new_vertex].begin(); it != incidenceList[new_vertex].end() ; ++it){
+				if(!visited[*it]) {
+					Edge e(new_vertex,*it,G.weight(new_vertex,*it));
+					edges.insert(e);
+				}
+			}
+		}
+	}
+
+	return S;
+
+}
+
+// Solo para arboles y no arboles
+vector<vector<int> > HeavyTransport::getInsidenceList(const Graph& G) const{
+
+  vector<vector<int> > incidenceList(G.getVertexCount());
+  for(size_t i = 0; i < G.getVertexCount(); i++){ //O(parents.size())
+    for (size_t j = 0; j < G.getVertexCount(); j++){
+    if(G.adjacent(i,j))
+    	incidenceList[i].push_back(j);
     }
-
-    // Grafo/Arbol generador minimo
-    Graph hTMST(_factories + _clients, roadsListMST);
-
-    // Distancia de cada nodo (cliente o fabrica) a cada fabrica
-    vector<vector<int> > distancesToFactory(_factories);
-
-    for(unsigned int i = 0; i < _factories; i++){
-        distancesToFactory[i] = bfsTreeDistance(hTMST, i);
-    }
-
-    // Fabrica mas cercana a cada cliente
-    vector<int> closestFactoryToEachClient(_clients);
-
-    for(unsigned int c = 0; c < _clients; c++){
-        int closestFactory = 0;
-        for(unsigned int f = 1; f < _factories; f++){
-            if(distancesToFactory[f][_factories + c] < closestFactory){
-                closestFactory = f;
-            }
-        }
-        closestFactoryToEachClient[c] = closestFactory;
-    }
-
-    // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias entre fábricas
-    for(unsigned int i = 0; i < _factories; i++){
-        for(unsigned int j = 0; j < _factories; j++){
-            hTMST.setAdjacency(i, j, false);
-        }
-    }
-
-    // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias entre clientes
-    for(unsigned int i = 0; i < _clients; i++){
-        for(unsigned int j = 0; j < _clients; j++){
-            if(closestFactoryToEachClient[i] != closestFactoryToEachClient[j]){
-                hTMST.setAdjacency(_factories + i, _factories + j, false);
-            }
-        }
-    }
-
-    // Modificamos el grafo/arbol eliminando las aristas/rutas innecesarias entre un cliente y una fábrica
-    for(unsigned int i = 0; i < _factories; i++){
-        for(unsigned int j = 0; j < _clients; j++){
-            if((int)i != closestFactoryToEachClient[j]){
-                hTMST.setAdjacency(i, _clients + j, false);
-            }
-        }
-    }
-
-    return hTMST;
+  }
+  return incidenceList;
 }
 
 
-std::vector<int> HeavyTransport::bfsTreeDistance(const Graph &tree, unsigned int startVertex) const {
-    unsigned int vertex;
-    std::queue<unsigned int> vertexQueue;
-    std::vector<int> distaces(tree.getVertexCount(), 0);
-    std::vector<bool> visited(tree.getVertexCount(), false);
-
-    vertexQueue.push(startVertex);
-    visited[startVertex] = true;
-
-    while(!vertexQueue.empty()){
-        vertex = vertexQueue.front();
-        vertexQueue.pop();
-        for(unsigned int i = 0; i < tree.getVertexCount(); i++){
-            if(!visited[i] && tree.adjacent(vertex, i)){
-                distaces[i] = distaces[vertex] + tree.weight(vertex, i);
-                vertexQueue.push(i);
-                visited[i] = true;
-            }
-        }
-    }
-
-    return distaces;
+Graph HeavyTransport::getOptimalSolution() const {
+	Graph hT(_factories + _clients, _roadsList);
+	vector<vector<int> > incidenceList = getInsidenceList(hT);
+	vector<Edge> S = Kruskal(hT,incidenceList);
+	Graph Sol(hT.getVertexCount(),S);
+	return Sol;
 }

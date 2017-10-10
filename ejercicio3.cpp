@@ -52,7 +52,7 @@ int main(){
     // Se calcula la solucion para cada instancia del problema
     std::vector<Graph> heavyTransportSolutionList;
     for(size_t i = 0; i < heavyTransportList.size(); i++){
-        heavyTransportSolutionList.push_back(heavyTransportList[i].applyToComponents());
+        heavyTransportSolutionList.push_back(heavyTransportList[i].getOptimalSolution());
     }
 
     // Output
