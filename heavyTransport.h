@@ -7,6 +7,8 @@
 class HeavyTransport{
     public:
         HeavyTransport(unsigned int factories, unsigned int clients);
+        unsigned int getFactories();
+        unsigned int getClients();
         void addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost);
         vector<Edge> Kruskal(const Graph& G, vector<vector<int> >& incidenceList) const;
         Graph getOptimalSolution() const;

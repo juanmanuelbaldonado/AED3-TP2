@@ -56,6 +56,16 @@ HeavyTransport::HeavyTransport(unsigned int factories, unsigned int clients){
 }
 
 
+unsigned int HeavyTransport::getFactories(){
+	return _factories;
+}
+
+
+unsigned int HeavyTransport::getClients(){
+	return _clients;
+}
+
+
 void HeavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost){
   Edge e;
   e.vertexA = fc1 - 1; // Las fabricas y clientes se ingresan numerados del 1 a factories+clients
