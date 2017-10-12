@@ -10,9 +10,9 @@ class HeavyTransport{
         unsigned int getFactories();
         unsigned int getClients();
         void addRoad(unsigned int fc1, unsigned int fc2, unsigned int cost);
-        vector<Edge> Kruskal(const Graph& G, vector<vector<int> >& incidenceList) const;
+        vector<Edge> PrimMod(const Graph& G, vector<vector<int> >& adjacencyList) const;
         Graph getOptimalSolution() const;
-        vector<vector<int> > getInsidenceList(const Graph& G) const;
+        vector<vector<int> > getAdjacencyList(const Graph& G) const;
         Graph getOptimalSolution(const Graph& G) const;
 
     private:

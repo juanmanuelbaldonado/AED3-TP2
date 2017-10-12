@@ -75,15 +75,21 @@ void HeavyTransport::addRoad(unsigned int fc1, unsigned int fc2, unsigned int co
 }
 
 
-vector<Edge> HeavyTransport::Kruskal(const Graph& G, vector<vector<int> >& incidenceList) const{
+vector<Edge> HeavyTransport::PrimMod(const Graph& G, vector<vector<int> >& adjacencyList) const{
+  /* Version de algoritmo de prim modificada en la cual al inicio
+   * los nodos que corresponden a las fabricas se marcan como
+   * visitados. El algoritmo devuelve una lista de ejes que se
+   * corresponden con los ejes usados en la solucion optima.
+   */
+
 
 	// Marcamos las fabricas como visitadas
 	vector<bool> visited(G.getVertexCount(),false);
 	set<Edge> edges;
-	
+
 	for (unsigned int i = 0; i < _factories; ++i){
 		visited[i] = true;
-		for (auto it = incidenceList[i].begin(); it != incidenceList[i].end() ; ++it){
+		for (auto it = adjacencyList[i].begin(); it != adjacencyList[i].end() ; ++it){
 			if((unsigned int)*it >= _factories) {
 				Edge e(i,*it,G.weight(i,*it));
 				edges.insert(e);
@@ -100,7 +106,7 @@ vector<Edge> HeavyTransport::Kruskal(const Graph& G, vector<vector<int> >& incid
 			int new_vertex = !visited[e.vertexA] ? e.vertexA : e.vertexB;
 			visited[new_vertex] = true;
 			S.push_back(e);
-			for (auto it = incidenceList[new_vertex].begin(); it != incidenceList[new_vertex].end() ; ++it){
+			for (auto it = adjacencyList[new_vertex].begin(); it != adjacencyList[new_vertex].end() ; ++it){
 				if(!visited[*it]) {
 					Edge e(new_vertex,*it,G.weight(new_vertex,*it));
 					edges.insert(e);
@@ -114,23 +120,23 @@ vector<Edge> HeavyTransport::Kruskal(const Graph& G, vector<vector<int> >& incid
 }
 
 // Solo para arboles y no arboles
-vector<vector<int> > HeavyTransport::getInsidenceList(const Graph& G) const{
-
-  vector<vector<int> > incidenceList(G.getVertexCount());
+vector<vector<int> > HeavyTransport::getAdjacencyList(const Graph& G) const{
+  // Devuelve la lista de adyacencia para el grafo G.
+  vector<vector<int> > adjacencyList(G.getVertexCount());
   for(size_t i = 0; i < G.getVertexCount(); i++){ //O(parents.size())
     for (size_t j = 0; j < G.getVertexCount(); j++){
     if(G.adjacent(i,j))
-    	incidenceList[i].push_back(j);
+    	adjacencyList[i].push_back(j);
     }
   }
-  return incidenceList;
+  return adjacencyList;
 }
 
 
 Graph HeavyTransport::getOptimalSolution() const {
 	Graph hT(_factories + _clients, _roadsList);
-	vector<vector<int> > incidenceList = getInsidenceList(hT);
-	vector<Edge> S = Kruskal(hT,incidenceList);
+	vector<vector<int> > adjacencyList = getAdjacencyList(hT);
+	vector<Edge> S = PrimMod(hT,adjacencyList);
 	Graph Sol(hT.getVertexCount(),S);
 	return Sol;
 }
